@@ -34,7 +34,6 @@ staticfiles/
 venv/
 ENV/
 env/
-ynov_air/
 .venv
 
 # IDE
