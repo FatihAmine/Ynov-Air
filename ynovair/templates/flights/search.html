@@ -1,0 +1,79 @@
+{% extends 'flights/base.html' %}
+
+{% block title %}Rechercher un vol - Ynov Air{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Rechercher un vol</h1>
+
+    <form method="GET" class="search-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="origin">Départ</label>
+                <select name="origin" id="origin" required>
+                    <option value="">Choisir un aéroport</option>
+                    {% for airport in airports %}
+                    <option value="{{ airport.id }}">{{ airport.city }} ({{ airport.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="destination">Arrivée</label>
+                <select name="destination" id="destination" required>
+                    <option value="">Choisir un aéroport</option>
+                    {% for airport in airports %}
+                    <option value="{{ airport.id }}">{{ airport.city }} ({{ airport.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </div>
+    </form>
+
+    {% if flights %}
+    <h2>Résultats de recherche</h2>
+    <div class="flights-list">
+        {% for flight in flights %}
+        <div class="flight-item">
+            <div class="flight-header">
+                <h3>{{ flight.flight_number }}</h3>
+                <span class="status status-{{ flight.status|lower }}">{{ flight.get_status_display }}</span>
+            </div>
+            <div class="flight-details">
+                <div class="route">
+                    <div class="airport">
+                        <strong>{{ flight.origin.city }}</strong>
+                        <span class="code">{{ flight.origin.code }}</span>
+                        <span class="time">{{ flight.departure_time|date:"H:i" }}</span>
+                    </div>
+                    <div class="duration">
+                        <span class="arrow">→</span>
+                        <span>{{ flight.duration }}</span>
+                    </div>
+                    <div class="airport">
+                        <strong>{{ flight.destination.city }}</strong>
+                        <span class="code">{{ flight.destination.code }}</span>
+                        <span class="time">{{ flight.arrival_time|date:"H:i" }}</span>
+                    </div>
+                </div>
+                <div class="flight-meta">
+                    <p><strong>Prix:</strong> {{ flight.price }} €</p>
+                    <p><strong>Sièges disponibles:</strong> {{ flight.available_seats }}</p>
+                </div>
+            </div>
+            <a href="{% url 'flight_detail' flight.id %}" class="btn btn-primary">Réserver</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% elif request.GET.origin %}
+    <p class="no-results">Aucun vol trouvé pour cette recherche.</p>
+    {% endif %}
+</div>
+{% endblock %}

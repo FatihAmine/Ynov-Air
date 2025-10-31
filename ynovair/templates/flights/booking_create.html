@@ -1,0 +1,73 @@
+{% extends 'flights/base.html' %}
+
+{% block title %}Réserver - Ynov Air{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Réserver votre vol</h1>
+
+    <div class="booking-summary">
+        <h2>Vol {{ flight.flight_number }}</h2>
+        <p>{{ flight.origin.city }} → {{ flight.destination.city }}</p>
+        <p>Départ: {{ flight.departure_time|date:"d/m/Y à H:i" }}</p>
+        <p>Prix: {{ flight.price }} € par passager</p>
+    </div>
+
+    <form method="POST" class="booking-form">
+        {% csrf_token %}
+        <h3>Informations du passager principal</h3>
+
+        <div class="form-group">
+            <label for="first_name">Prénom *</label>
+            <input type="text" name="first_name" id="first_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Nom *</label>
+            <input type="text" name="last_name" id="last_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" name="email" id="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Téléphone *</label>
+            <input type="tel" name="phone" id="phone" required>
+        </div>
+
+        <div class="form-group">
+            <label for="passport_number">Numéro de passeport *</label>
+            <input type="text" name="passport_number" id="passport_number" required>
+        </div>
+
+        <div class="form-group">
+            <label for="date_of_birth">Date de naissance *</label>
+            <input type="date" name="date_of_birth" id="date_of_birth" required>
+        </div>
+
+        <div class="form-group">
+            <label for="number_of_passengers">Nombre de passagers *</label>
+            <input type="number" name="number_of_passengers" id="number_of_passengers" min="1" max="9" value="1" required>
+        </div>
+
+        <div class="total-price">
+            <strong>Prix total:</strong> <span id="total">{{ flight.price }}</span> €
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg">Confirmer la réservation</button>
+    </form>
+</div>
+
+<script>
+    const pricePerPassenger = {{ flight.price }};
+    const passengersInput = document.getElementById('number_of_passengers');
+    const totalSpan = document.getElementById('total');
+
+    passengersInput.addEventListener('input', function() {
+        const total = pricePerPassenger * this.value;
+        totalSpan.textContent = total.toFixed(2);
+    });
+</script>
+{% endblock %}

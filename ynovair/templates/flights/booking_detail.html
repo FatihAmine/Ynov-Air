@@ -1,0 +1,51 @@
+{% extends 'flights/base.html' %}
+
+{% block title %}Réservation {{ booking.booking_reference }} - Ynov Air{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="booking-confirmation">
+        <h1>Réservation confirmée</h1>
+        <div class="confirmation-box">
+            <div class="check-icon">✓</div>
+            <p class="ref">Référence: <strong>{{ booking.booking_reference }}</strong></p>
+            <p>Votre réservation a été enregistrée avec succès.</p>
+        </div>
+
+        <div class="booking-info">
+            <h2>Détails de la réservation</h2>
+
+            <div class="info-section">
+                <h3>Vol</h3>
+                <p><strong>Numéro:</strong> {{ booking.flight.flight_number }}</p>
+                <p><strong>Itinéraire:</strong> {{ booking.flight.origin.city }} → {{ booking.flight.destination.city }}</p>
+                <p><strong>Départ:</strong> {{ booking.flight.departure_time|date:"d/m/Y à H:i" }}</p>
+                <p><strong>Arrivée:</strong> {{ booking.flight.arrival_time|date:"d/m/Y à H:i" }}</p>
+            </div>
+
+            <div class="info-section">
+                <h3>Passager</h3>
+                <p><strong>Nom:</strong> {{ booking.passenger.get_full_name }}</p>
+                <p><strong>Email:</strong> {{ booking.passenger.email }}</p>
+                <p><strong>Téléphone:</strong> {{ booking.passenger.phone }}</p>
+                <p><strong>Passeport:</strong> {{ booking.passenger.passport_number }}</p>
+            </div>
+
+            <div class="info-section">
+                <h3>Tarif</h3>
+                <p><strong>Nombre de passagers:</strong> {{ booking.number_of_passengers }}</p>
+                <p><strong>Prix total:</strong> {{ booking.total_price }} €</p>
+                <p><strong>Statut:</strong> <span class="status status-{{ booking.status|lower }}">{{ booking.get_status_display }}</span></p>
+                {% if booking.seat_number %}
+                <p><strong>Siège:</strong> {{ booking.seat_number }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="{% url 'home' %}" class="btn btn-primary">Retour à l'accueil</a>
+            <a href="{% url 'my_bookings' %}" class="btn btn-secondary">Mes réservations</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

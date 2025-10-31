@@ -1,0 +1,9 @@
+# Claude AI files
+.claude
+
+# Virtual environment
+ynov_air/
+
+# Python cache
+__pycache__/
+*.pyc

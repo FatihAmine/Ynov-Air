@@ -1,0 +1,41 @@
+{% extends 'flights/base.html' %}
+
+{% block title %}Mes Réservations - Ynov Air{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Mes Réservations</h1>
+
+    {% if bookings %}
+    <div class="bookings-list">
+        {% for booking in bookings %}
+        <div class="booking-item">
+            <div class="booking-header">
+                <h3>{{ booking.booking_reference }}</h3>
+                <span class="status status-{{ booking.status|lower }}">{{ booking.get_status_display }}</span>
+            </div>
+            <div class="booking-content">
+                <div class="booking-flight">
+                    <p><strong>Vol:</strong> {{ booking.flight.flight_number }}</p>
+                    <p>{{ booking.flight.origin.city }} → {{ booking.flight.destination.city }}</p>
+                    <p><strong>Départ:</strong> {{ booking.flight.departure_time|date:"d/m/Y à H:i" }}</p>
+                </div>
+                <div class="booking-passenger">
+                    <p><strong>Passager:</strong> {{ booking.passenger.get_full_name }}</p>
+                    <p><strong>Nombre:</strong> {{ booking.number_of_passengers }} personne(s)</p>
+                </div>
+                <div class="booking-price">
+                    <p><strong>Prix total:</strong></p>
+                    <p class="price">{{ booking.total_price }} €</p>
+                </div>
+            </div>
+            <a href="{% url 'booking_detail' booking.id %}" class="btn btn-secondary">Voir détails</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-results">Vous n'avez aucune réservation.</p>
+    <a href="{% url 'search_flights' %}" class="btn btn-primary">Rechercher un vol</a>
+    {% endif %}
+</div>
+{% endblock %}

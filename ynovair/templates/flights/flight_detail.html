@@ -1,0 +1,65 @@
+{% extends 'flights/base.html' %}
+
+{% block title %}Vol {{ flight.flight_number }} - Ynov Air{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="flight-detail">
+        <h1>Vol {{ flight.flight_number }}</h1>
+        <span class="status status-{{ flight.status|lower }}">{{ flight.get_status_display }}</span>
+
+        <div class="detail-section">
+            <h2>Itinéraire</h2>
+            <div class="route-detail">
+                <div class="route-point">
+                    <h3>Départ</h3>
+                    <p class="city">{{ flight.origin.name }}</p>
+                    <p class="location">{{ flight.origin.city }}, {{ flight.origin.country }}</p>
+                    <p class="code">{{ flight.origin.code }}</p>
+                    <p class="time">{{ flight.departure_time|date:"d/m/Y à H:i" }}</p>
+                </div>
+
+                <div class="route-line">
+                    <span class="duration">Durée: {{ flight.duration }}</span>
+                </div>
+
+                <div class="route-point">
+                    <h3>Arrivée</h3>
+                    <p class="city">{{ flight.destination.name }}</p>
+                    <p class="location">{{ flight.destination.city }}, {{ flight.destination.country }}</p>
+                    <p class="code">{{ flight.destination.code }}</p>
+                    <p class="time">{{ flight.arrival_time|date:"d/m/Y à H:i" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2>Informations</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Prix par passager</span>
+                    <span class="value">{{ flight.price }} €</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Sièges disponibles</span>
+                    <span class="value">{{ flight.available_seats }} / {{ flight.total_seats }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Taux d'occupation</span>
+                    <span class="value">{{ flight.get_occupancy_rate|floatformat:0 }}%</span>
+                </div>
+            </div>
+        </div>
+
+        {% if flight.is_available %}
+        <div class="booking-action">
+            <a href="{% url 'booking_create' flight.id %}" class="btn btn-primary btn-lg">Réserver ce vol</a>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            Ce vol n'est plus disponible à la réservation.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
