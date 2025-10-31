@@ -2,7 +2,7 @@
 .claude
 
 # Virtual environment
-ynov_air/
+ynov_air_venv/
 
 # Python cache
 __pycache__/
