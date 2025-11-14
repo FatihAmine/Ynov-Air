@@ -4,6 +4,7 @@ from django.utils import timezone
 from .models import Flight, Airport, Passenger, Booking
 import random
 import string
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -56,7 +57,7 @@ def flight_detail(request, flight_id):
     context = {'flight': flight}
     return render(request, 'flights/flight_detail.html', context)
 
-
+@login_required
 def booking_create(request, flight_id):
     """Créer une réservation"""
     flight = get_object_or_404(Flight, id=flight_id)
@@ -83,6 +84,7 @@ def booking_create(request, flight_id):
                 booking_reference=booking_reference,
                 flight=flight,
                 passenger=passenger,
+                user=request.user,
                 number_of_passengers=number_of_passengers,
                 total_price=flight.price * number_of_passengers,
                 status='CONFIRMED'

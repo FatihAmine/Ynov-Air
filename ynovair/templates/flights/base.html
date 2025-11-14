@@ -3,38 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Ynov Air{% endblock %}</title>
+    <title>{% block title %}Ynov Air - Réservation de vols{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        :root {
+            --ynov-green: #00b894;
+            --ynov-dark-green: #00916e;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--ynov-green), var(--ynov-dark-green));
+        }
+        
+        .btn-success {
+            background-color: var(--ynov-green);
+            border-color: var(--ynov-green);
+        }
+        
+        .btn-success:hover {
+            background-color: var(--ynov-dark-green);
+            border-color: var(--ynov-dark-green);
+        }
+        
+        .bg-success {
+            background-color: var(--ynov-green) !important;
+        }
+        
+        .text-success {
+            color: var(--ynov-green) !important;
+        }
+        
+        .border-success {
+            border-color: var(--ynov-green) !important;
+        }
+
+        .dropdown-menu {
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a href="{% url 'home' %}" class="logo">YNOV AIR</a>
-            <ul class="nav-menu">
-                <li><a href="{% url 'home' %}">Accueil</a></li>
-                <li><a href="{% url 'search_flights' %}">Rechercher</a></li>
-                <li><a href="{% url 'my_bookings' %}">Mes Réservations</a></li>
-            </ul>
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+                <i class="fas fa-plane"></i> Ynov Air
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'search_flights' %}">
+                            <i class="fas fa-search"></i> Rechercher
+                        </a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_bookings' %}">
+                                <i class="fas fa-ticket-alt"></i> Mes réservations
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'profile' %}">
+                                        <i class="fas fa-user"></i> Mon profil
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt"></i> Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-light text-dark ms-2 px-3" href="{% url 'register' %}">
+                                <i class="fas fa-user-plus"></i> Inscription
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
 
-    {% if messages %}
-    <div class="container">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
+    <!-- Main Content -->
     <main>
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
 
-    <footer>
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
         <div class="container">
-            <p>&copy; 2025 Ynov Air - Application pédagogique</p>
+            <p class="mb-0">
+                <i class="fas fa-plane"></i> Ynov Air - Application de démonstration
+            </p>
+            <p class="small text-muted mb-0">
+                Développée avec Django pour le cours sur les ORM - Ynov 2024
+            </p>
         </div>
     </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    {% block extra_js %}
+    {% endblock %}
 </body>
 </html>

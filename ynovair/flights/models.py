@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 
 class Airport(models.Model):
@@ -155,6 +156,8 @@ class Booking(models.Model):
         null=True,
         verbose_name="Numéro de siège"
     )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
 
     class Meta:
         verbose_name = "Réservation"

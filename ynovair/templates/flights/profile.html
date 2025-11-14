@@ -1,0 +1,128 @@
+{% extends 'flights/base.html' %}
+
+{% block title %}Mon Profil - Ynov Air{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- User Info Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-circle"></i> Mon Profil
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle fa-5x text-success"></i>
+                    </div>
+                    <h5>{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-muted mb-1">
+                        <i class="fas fa-at"></i> {{ user.username }}
+                    </p>
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-envelope"></i> {{ user.email }}
+                    </p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'profile_update' %}" class="btn btn-outline-success">
+                            <i class="fas fa-edit"></i> Modifier le profil
+                        </a>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted small">
+                    Membre depuis {{ user.date_joined|date:"F Y" }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Section -->
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-ticket-alt"></i> Mes Réservations
+                        <span class="badge bg-light text-dark float-end">{{ bookings.count }}</span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if bookings %}
+                        <div class="list-group">
+                            {% for booking in bookings %}
+                                <div class="list-group-item list-group-item-action mb-3 border rounded">
+                                    <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0">
+                                            <span class="badge bg-success">{{ booking.booking_reference }}</span>
+                                        </h5>
+                                        <span class="badge 
+                                            {% if booking.status == 'CONFIRMED' %}bg-success
+                                            {% elif booking.status == 'PENDING' %}bg-warning
+                                            {% elif booking.status == 'CANCELLED' %}bg-danger
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <p class="mb-1">
+                                                <i class="fas fa-plane-departure text-success"></i>
+                                                <strong>{{ booking.flight.origin.city }}</strong> ({{ booking.flight.origin.code }})
+                                                <i class="fas fa-arrow-right mx-2"></i>
+                                                <i class="fas fa-plane-arrival text-success"></i>
+                                                <strong>{{ booking.flight.destination.city }}</strong> ({{ booking.flight.destination.code }})
+                                            </p>
+                                            <p class="mb-1 text-muted small">
+                                                <i class="fas fa-plane"></i> Vol {{ booking.flight.flight_number }}
+                                            </p>
+                                            <p class="mb-1 text-muted small">
+                                                <i class="fas fa-calendar"></i> {{ booking.flight.departure_time|date:"d F Y à H:i" }}
+                                            </p>
+                                            <p class="mb-0 text-muted small">
+                                                <i class="fas fa-user"></i> {{ booking.number_of_passengers }} passager{{ booking.number_of_passengers|pluralize }}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <h4 class="text-success mb-2">{{ booking.total_price }}€</h4>
+                                            <a href="{% url 'booking_detail' booking.booking_reference %}" 
+                                               class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-eye"></i> Détails
+                                            </a>
+                                        </div>
+                                    </div>
+                                    
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i> Réservé le {{ booking.booking_date|date:"d/m/Y à H:i" }}
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">Aucune réservation</h5>
+                            <p class="text-muted">Vous n'avez pas encore effectué de réservation.</p>
+                            <a href="{% url 'home' %}" class="btn btn-success mt-3">
+                                <i class="fas fa-search"></i> Rechercher un vol
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
