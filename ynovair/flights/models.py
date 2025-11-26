@@ -30,6 +30,7 @@ class Flight(models.Model):
     ]
 
     flight_number = models.CharField(max_length=10, unique=True, verbose_name="Numéro de vol")
+    airline = models.CharField(max_length=100, verbose_name="Airline") 
     origin = models.ForeignKey(
         Airport,
         on_delete=models.CASCADE,
@@ -182,3 +183,44 @@ class Booking(models.Model):
             self.flight.available_seats += self.number_of_passengers
             self.flight.save()
             self.save()
+
+
+class Review(models.Model):
+    """Modèle représentant une évaluation d'un vol par un utilisateur"""
+
+    RATING_CHOICES = [
+        (1, "1 - Très mauvais"),
+        (2, "2 - Mauvais"),
+        (3, "3 - Moyen"),
+        (4, "4 - Bon"),
+        (5, "5 - Excellent"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+        verbose_name="Utilisateur"
+    )
+    flight = models.ForeignKey(
+        Flight,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+        verbose_name="Vol"
+    )
+    rating = models.IntegerField(
+        choices=RATING_CHOICES,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        verbose_name="Note"
+    )
+    comment = models.TextField(
+        max_length=500,
+        blank=True,
+        verbose_name="Commentaire"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
+
+class Meta:
+    verbose_name = "Avis"
+    verbose_name_plural = "Avis"
+    ordering = ['-created_at']

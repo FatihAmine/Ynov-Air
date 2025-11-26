@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
-from .models import Flight, Airport, Passenger, Booking
+from django.contrib.auth.decorators import login_required
+
+from .models import Flight, Airport, Passenger, Booking, Review
+from .forms import ReviewForm
+
 import random
 import string
-from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -37,10 +40,8 @@ def search_flights(request):
                 destination_id=destination_id,
                 status='SCHEDULED'
             )
-
             if date:
                 flights = flights.filter(departure_time__date=date)
-
             flights = flights.order_by('departure_time')
 
     airports = Airport.objects.all()
@@ -52,10 +53,16 @@ def search_flights(request):
 
 
 def flight_detail(request, flight_id):
-    """Détails d'un vol"""
+    """Détails d'un vol + affichage des reviews"""
     flight = get_object_or_404(Flight, id=flight_id)
-    context = {'flight': flight}
+    reviews = Review.objects.filter(flight=flight).order_by('-created_at')
+
+    context = {
+        'flight': flight,
+        'reviews': reviews,
+    }
     return render(request, 'flights/flight_detail.html', context)
+
 
 @login_required
 def booking_create(request, flight_id):
@@ -76,7 +83,7 @@ def booking_create(request, flight_id):
         # Générer une référence unique
         booking_reference = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
-        # Créer la réservation
+        # Nombre de passagers
         number_of_passengers = int(request.POST.get('number_of_passengers', 1))
 
         if flight.available_seats >= number_of_passengers:
@@ -89,7 +96,6 @@ def booking_create(request, flight_id):
                 total_price=flight.price * number_of_passengers,
                 status='CONFIRMED'
             )
-
             messages.success(request, f'Réservation confirmée ! Référence: {booking_reference}')
             return redirect('booking_detail', booking_id=booking.id)
         else:
@@ -107,7 +113,27 @@ def booking_detail(request, booking_id):
 
 
 def my_bookings(request):
-    """Liste des réservations"""
-    bookings = Booking.objects.all().order_by('-booking_date')
+    """Liste des réservations de l'utilisateur connecté"""
+    bookings = Booking.objects.filter(user=request.user).order_by('-booking_date')
     context = {'bookings': bookings}
     return render(request, 'flights/my_bookings.html', context)
+
+
+@login_required
+def add_review(request, flight_id):
+    """Ajouter un review à un vol"""
+    flight = get_object_or_404(Flight, id=flight_id)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.flight = flight
+            review.user = request.user
+            review.save()
+            messages.success(request, 'Merci pour votre avis !')
+            return redirect('flight_detail', flight_id=flight.id)
+    else:
+        form = ReviewForm()
+
+    return render(request, 'flights/add_review.html', {'form': form, 'flight': flight})

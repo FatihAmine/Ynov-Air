@@ -17,10 +17,13 @@ urlpatterns = [
     path('booking/<int:booking_id>/', views.booking_detail, name='booking_detail'),
     path('my-bookings/', views.my_bookings, name='my_bookings'),
 
-    # Authentification
+    # Authentication
     path('register/', register_view, name='register'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('profile/', profile_view, name='profile'),
     path('profile/update/', profile_update_view, name='profile_update'),
+
+    # NEW: Add review
+    path('flight/<int:flight_id>/review/', views.add_review, name='add_review'),
 ]

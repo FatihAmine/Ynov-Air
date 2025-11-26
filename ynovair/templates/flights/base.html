@@ -20,6 +20,12 @@
             --ynov-green: #00b894;
             --ynov-dark-green: #00916e;
         }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
         
         .navbar {
             background: linear-gradient(135deg, var(--ynov-green), var(--ynov-dark-green));
@@ -54,6 +60,12 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer shadow and styling */
+        footer {
+            margin-top: auto; /* Push footer down */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -123,13 +135,12 @@
     </nav>
 
     <!-- Main Content -->
-    <main>
-        {% block content %}
-        {% endblock %}
+    <main class="flex-grow-1">
+        {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-4 mt-5">
+    <footer class="bg-dark text-white text-center py-4">
         <div class="container">
             <p class="mb-0">
                 <i class="fas fa-plane"></i> Ynov Air - Application de démonstration
@@ -142,9 +153,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Custom JS -->
-    {% block extra_js %}
-    {% endblock %}
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
