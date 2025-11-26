@@ -27,7 +27,7 @@ The project also includes analytics to monitor flight performance, booking trend
 
 1. **Clone the project**
 ```bash
-git clone <YOUR_PROJECT_URL>
+git clone YNOV air
 cd ynovair
 
 # Windows
